@@ -10,8 +10,6 @@ apply plugin: 'com.android.application'
 // please think carefully as to whether such customizations are really necessary
 // before doing so.
 
-// Custom definitions may go here
-
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
@@ -22,8 +20,24 @@ android {
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
+
+    // Configures Android Studio to look for a desktop java test directory
+    sourceSets {
+        test {
+            java.srcDirs = ['src/test/java']
+        }
+    }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
+
+    // Attach desktop dependencies strictly to the unit testing framework
+    testImplementation 'edu.wpi.first.apriltag:apriltag-java:2025.1.1'
+    testImplementation 'edu.wpi.first.wpimath:wpimath-java:2025.1.1'
+    testImplementation 'org.opencv:opencv-java:4.10.0-1'
+
+    testRuntimeOnly "edu.wpi.first.apriltag:apriltag-jni:2025.1.1:desktop"
+    testRuntimeOnly "edu.wpi.first.wpimath:wpimath-jni:2025.1.1:desktop"
+    testRuntimeOnly "org.opencv:opencv-jni:4.10.0-1:desktop"
 }
