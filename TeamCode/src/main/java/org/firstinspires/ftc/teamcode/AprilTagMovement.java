@@ -7,12 +7,14 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
 
 import java.util.List;
+import java.util.Set;
 
-public  class AprilTagMovement {
+public class AprilTagMovement {
 
     public AprilTagMovement(double shootingPositionX, double shootingPositionZ) {
         this.shootingPositionX = shootingPositionX;
         this.shootingPositionZ = shootingPositionZ;
+        AprilTagIds = Config.getIds();
     }
 
     double AprilTagX;
@@ -23,6 +25,7 @@ public  class AprilTagMovement {
     boolean back;
     double shootingPositionX;
     double shootingPositionZ;
+    Set<Integer> AprilTagIds;
 
 
     public void DirectionFinder(AprilTagProcessor aprilTag, TriFunction<Double, Double, Double, String> driveFunction) { //replace by actual opmode instead of sample opmode
@@ -94,27 +97,34 @@ public  class AprilTagMovement {
         double newForwards = parameters.first;
         double newRight = parameters.second;
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection instanceof AprilTagSingleDetection) {
-                AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
+        int i = 0;
+        while (AprilTagZ != shootingPositionZ && AprilTagX != shootingPositionX) {
+            for (AprilTagDetection detection : currentDetections) {
+                if (detection instanceof AprilTagSingleDetection) {
+                    AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
 
-                if ((singleDet.id == 23) || (singleDet.id == 24)) {
-                    AprilTagX = singleDet.robotPose.getPosition().x;
-                    AprilTagZ = singleDet.robotPose.getPosition().z;
-                    break;
+                    if (AprilTagIds.contains(singleDet.id)) {
+                        AprilTagX = singleDet.robotPose.getPosition().x;
+                        AprilTagZ = singleDet.robotPose.getPosition().z;
+                        break;
+                    }else {
+
+                        if (this.left) {
+                            driveFunction.apply(0.0, 0.0, 0.5);
+                        } else {
+                            driveFunction.apply(0.0, 0.0, -0.5);
+                        }
+                    }
+
                 }
             }
-        }
-        while (AprilTagZ != shootingPositionZ && AprilTagX != shootingPositionX) {
-            int i = 4;
             if (i % 4 == 0) {
                 driveFunction.apply(newForwards, newRight, 0.0);
             }
-            i += 1;
+            i++;
             if (AprilTagZ != shootingPositionZ && AprilTagX != shootingPositionX) {
                 break;
             }
-
         }
     }
 }
