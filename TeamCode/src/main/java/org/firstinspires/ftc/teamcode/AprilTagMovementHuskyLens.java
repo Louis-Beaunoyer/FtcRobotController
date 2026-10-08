@@ -95,7 +95,7 @@ public class AprilTagMovementHuskyLens {
         double newForwards = parameters.first;
         double newRight = parameters.second;
         HuskyLens.Block[] blocks = huskyLens.blocks();
-        int i = 0;
+        int i;
         while (huskyLensY != shootingPositionY && huskyLensX != shootingPositionX) {
             for (i = 0; i < blocks.length; i++) {
                 if (blocks[i] != null) {
@@ -111,6 +111,10 @@ public class AprilTagMovementHuskyLens {
                         } else {
                             driveFunction.apply(0.0, 0.0, -0.5);
                         }
+                        findDistanceAndAngle();
+                        Pair<Double, Double> parameters_temp = findDistanceAndAngle();
+                        newForwards = parameters_temp.first;
+                        newRight = parameters_temp.second;
                     }
 
                 }
@@ -118,7 +122,7 @@ public class AprilTagMovementHuskyLens {
             if (i % 4 == 0) {
                 driveFunction.apply(newForwards, newRight, 0.0);
             }
-            i++;
+
             if (huskyLensY != shootingPositionY && huskyLensX != shootingPositionX) {
                 break;
             }
