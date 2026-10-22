@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -51,12 +52,12 @@ public class MecanumTeleOp extends OpMode {
     @Override
     public void loop() {
 
-        // A remet la direction actuelle du robot à 0 degré
+        // Reset of the direction
         if (gamepad1.a) {
             imu.resetYaw();
         }
 
-        // Left bumper = conduite relative au robot
+        // Robot Relative
         if (gamepad1.left_bumper) {
 
             drive(
@@ -67,13 +68,33 @@ public class MecanumTeleOp extends OpMode {
 
         } else {
 
-            // Normalement on utilise le Field Relative
+            // Field Relative
             driveFieldRelative(
                     -gamepad1.left_stick_y,
                     gamepad1.left_stick_x,
                     gamepad1.right_stick_x
             );
         }
+
+        // Telemetry
+        telemetry.addData("Forward", -gamepad1.left_stick_y);
+        telemetry.addData("Strafe", gamepad1.left_stick_x);
+        telemetry.addData("Turn", gamepad1.right_stick_x);
+
+        telemetry.addData("Angle IMU",
+                imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+
+        telemetry.addData("Front Left", frontLeft.getPower());
+        telemetry.addData("Front Right", frontRight.getPower());
+        telemetry.addData("Back Left", backLeft.getPower());
+        telemetry.addData("Back Right", backRight.getPower());
+
+        telemetry.addData("Encoder FL", frontLeft.getCurrentPosition());
+        telemetry.addData("Encoder FR", frontRight.getCurrentPosition());
+        telemetry.addData("Encoder BL", backLeft.getCurrentPosition());
+        telemetry.addData("Encoder BR", backRight.getCurrentPosition());
+
+        telemetry.update();
     }
 
     private void driveFieldRelative(
