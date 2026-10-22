@@ -71,6 +71,13 @@ public class MecanumTeleOp extends OpMode {
     }
 
     @Override
+    public void start() {
+
+        // Set the field reference when TeleOp starts
+        imu.resetYaw();
+    }
+
+    @Override
     public void loop() {
 
         double forward = applyDeadZone(-gamepad1.left_stick_y);
@@ -84,23 +91,18 @@ public class MecanumTeleOp extends OpMode {
                         gamepad1.right_trigger <= 0.1 &&
                         gamepad1.left_trigger <= 0.1;
 
-        // B stops and locks all motors
+        // Lock all motors
         if (gamepad1.b) {
             motorsEnabled = false;
         }
 
-        // Y unlocks motors only when controls are neutral
+        // Enable motors when controls are neutral
         if (gamepad1.y && !previousY &&
                 !gamepad1.b && controlsNeutral) {
             motorsEnabled = true;
         }
 
         previousY = gamepad1.y;
-
-        // Reset IMU heading
-        if (gamepad1.a) {
-            imu.resetYaw();
-        }
 
         if (!motorsEnabled) {
 
@@ -109,14 +111,10 @@ public class MecanumTeleOp extends OpMode {
 
         } else {
 
-            // Robot Relative when left bumper is held
-            if (gamepad1.left_bumper) {
-                drive(forward, right, rotate);
-            } else {
-                driveFieldRelative(forward, right, rotate);
-            }
+            // Always use Field Relative driving
+            driveFieldRelative(forward, right, rotate);
 
-            // Intake
+            // Intake control
             if (gamepad1.right_trigger > 0.1 &&
                     gamepad1.left_trigger <= 0.1) {
 
@@ -128,6 +126,7 @@ public class MecanumTeleOp extends OpMode {
                 intake.setPower(-0.4);
 
             } else {
+
                 intake.setPower(0);
             }
         }
@@ -135,6 +134,8 @@ public class MecanumTeleOp extends OpMode {
         // Telemetry
         telemetry.addData("Safety",
                 motorsEnabled ? "ENABLED" : "LOCKED");
+
+        telemetry.addData("Drive Mode", "Field Relative");
 
         telemetry.addData("Forward", forward);
         telemetry.addData("Strafe", right);
@@ -183,6 +184,7 @@ public class MecanumTeleOp extends OpMode {
         return value;
     }
 
+    // Field Relative movement
     private void driveFieldRelative(
             double forward,
             double right,
@@ -202,6 +204,7 @@ public class MecanumTeleOp extends OpMode {
         drive(newForward, newRight, rotate);
     }
 
+    // Robot Relative motor calculations
     public void drive(
             double forward,
             double right,
@@ -216,8 +219,8 @@ public class MecanumTeleOp extends OpMode {
 
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
         maxPower = Math.max(maxPower, Math.abs(frontRightPower));
-        maxPower = Math.max(maxPower, Math.abs(backRightPower));
         maxPower = Math.max(maxPower, Math.abs(backLeftPower));
+        maxPower = Math.max(maxPower, Math.abs(backRightPower));
 
         frontLeft.setPower(speedLimit * frontLeftPower / maxPower);
         frontRight.setPower(speedLimit * frontRightPower / maxPower);
