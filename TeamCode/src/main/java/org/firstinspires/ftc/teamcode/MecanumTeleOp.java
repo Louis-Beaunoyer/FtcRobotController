@@ -1,6 +1,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,16 +18,29 @@ public class MecanumTeleOp extends OpMode {
     DcMotor frontRight;
     DcMotor backLeft;
     DcMotor backRight;
+    DcMotor intake;
 
     IMU imu;
 
+    double speedLimit = 0.4;
+    double deadZone = 0.05;
+
+    boolean motorsEnabled = false;
+    boolean previousY = false;
+
     @Override
     public void init() {
+
+        telemetry = new MultipleTelemetry(
+                telemetry,
+                FtcDashboard.getInstance().getTelemetry()
+        );
 
         frontLeft = hardwareMap.get(DcMotor.class, "front_left_drive");
         frontRight = hardwareMap.get(DcMotor.class, "front_right_drive");
         backLeft = hardwareMap.get(DcMotor.class, "back_left_drive");
         backRight = hardwareMap.get(DcMotor.class, "back_right_drive");
+        intake = hardwareMap.get(DcMotor.class, "intake");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -35,51 +50,95 @@ public class MecanumTeleOp extends OpMode {
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        drive(0, 0, 0);
+        intake.setPower(0);
+
         imu = hardwareMap.get(IMU.class, "imu");
 
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
-
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
-
         RevHubOrientationOnRobot orientationOnRobot =
-                new RevHubOrientationOnRobot(logoDirection, usbDirection);
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                );
 
         imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+        motorsEnabled = false;
+        previousY = false;
+
+        telemetry.addData("Safety", "LOCKED - Press Y to enable");
+        telemetry.update();
     }
 
     @Override
     public void loop() {
 
-        // Reset of the direction
+        double forward = applyDeadZone(-gamepad1.left_stick_y);
+        double right = applyDeadZone(gamepad1.left_stick_x);
+        double rotate = applyDeadZone(gamepad1.right_stick_x);
+
+        boolean controlsNeutral =
+                forward == 0 &&
+                        right == 0 &&
+                        rotate == 0 &&
+                        gamepad1.right_trigger <= 0.1 &&
+                        gamepad1.left_trigger <= 0.1;
+
+        // B stops and locks all motors
+        if (gamepad1.b) {
+            motorsEnabled = false;
+        }
+
+        // Y unlocks motors only when controls are neutral
+        if (gamepad1.y && !previousY &&
+                !gamepad1.b && controlsNeutral) {
+            motorsEnabled = true;
+        }
+
+        previousY = gamepad1.y;
+
+        // Reset IMU heading
         if (gamepad1.a) {
             imu.resetYaw();
         }
 
-        // Robot Relative
-        if (gamepad1.left_bumper) {
+        if (!motorsEnabled) {
 
-            drive(
-                    -gamepad1.left_stick_y,
-                    gamepad1.left_stick_x,
-                    gamepad1.right_stick_x
-            );
+            drive(0, 0, 0);
+            intake.setPower(0);
 
         } else {
 
-            // Field Relative
-            driveFieldRelative(
-                    -gamepad1.left_stick_y,
-                    gamepad1.left_stick_x,
-                    gamepad1.right_stick_x
-            );
+            // Robot Relative when left bumper is held
+            if (gamepad1.left_bumper) {
+                drive(forward, right, rotate);
+            } else {
+                driveFieldRelative(forward, right, rotate);
+            }
+
+            // Intake
+            if (gamepad1.right_trigger > 0.1 &&
+                    gamepad1.left_trigger <= 0.1) {
+
+                intake.setPower(0.4);
+
+            } else if (gamepad1.left_trigger > 0.1 &&
+                    gamepad1.right_trigger <= 0.1) {
+
+                intake.setPower(-0.4);
+
+            } else {
+                intake.setPower(0);
+            }
         }
 
         // Telemetry
-        telemetry.addData("Forward", -gamepad1.left_stick_y);
-        telemetry.addData("Strafe", gamepad1.left_stick_x);
-        telemetry.addData("Turn", gamepad1.right_stick_x);
+        telemetry.addData("Safety",
+                motorsEnabled ? "ENABLED" : "LOCKED");
+
+        telemetry.addData("Forward", forward);
+        telemetry.addData("Strafe", right);
+        telemetry.addData("Turn", rotate);
 
         telemetry.addData("Angle IMU",
                 imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
@@ -94,7 +153,34 @@ public class MecanumTeleOp extends OpMode {
         telemetry.addData("Encoder BL", backLeft.getCurrentPosition());
         telemetry.addData("Encoder BR", backRight.getCurrentPosition());
 
+        telemetry.addData("Intake Power", intake.getPower());
+        telemetry.addData("Intake Encoder", intake.getCurrentPosition());
+
+        telemetry.addData("Speed Limit", speedLimit * 100 + "%");
+        telemetry.addData("Dead Zone", deadZone * 100 + "%");
+
         telemetry.update();
+    }
+
+    @Override
+    public void stop() {
+
+        motorsEnabled = false;
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        intake.setPower(0);
+    }
+
+    private double applyDeadZone(double value) {
+
+        if (Math.abs(value) < deadZone) {
+            return 0;
+        }
+
+        return value;
     }
 
     private void driveFieldRelative(
@@ -127,16 +213,15 @@ public class MecanumTeleOp extends OpMode {
         double backLeftPower = forward - right + rotate;
 
         double maxPower = 1.0;
-        double maxSpeed = 1.0;
 
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
         maxPower = Math.max(maxPower, Math.abs(frontRightPower));
         maxPower = Math.max(maxPower, Math.abs(backRightPower));
         maxPower = Math.max(maxPower, Math.abs(backLeftPower));
 
-        frontLeft.setPower(maxSpeed * (frontLeftPower / maxPower));
-        frontRight.setPower(maxSpeed * (frontRightPower / maxPower));
-        backLeft.setPower(maxSpeed * (backLeftPower / maxPower));
-        backRight.setPower(maxSpeed * (backRightPower / maxPower));
+        frontLeft.setPower(speedLimit * frontLeftPower / maxPower);
+        frontRight.setPower(speedLimit * frontRightPower / maxPower);
+        backLeft.setPower(speedLimit * backLeftPower / maxPower);
+        backRight.setPower(speedLimit * backRightPower / maxPower);
     }
 }
