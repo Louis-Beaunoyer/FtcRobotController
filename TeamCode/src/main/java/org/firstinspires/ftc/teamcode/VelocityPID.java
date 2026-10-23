@@ -10,19 +10,36 @@ public class VelocityPID {
     double integral = 0;
     double previousError = 0;
 
+    double maxOutput;
+
     boolean firstRun = true;
 
     public VelocityPID(double kP, double kI, double kD) {
+        this(kP, kI, kD, 1.0);
+    }
+
+    public VelocityPID(double kP, double kI, double kD,
+                       double maxOutput) {
+
+        if (!Double.isFinite(maxOutput)
+                || maxOutput <= 0
+                || maxOutput > 1) {
+            throw new IllegalArgumentException(
+                    "Output limit must be between 0 and 1"
+            );
+        }
+
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
+        this.maxOutput = maxOutput;
     }
 
     public double calculate(double targetVelocity,
                             double actualVelocity,
                             double deltaTime) {
 
-        if (deltaTime <= 0) {
+        if (!Double.isFinite(deltaTime) || deltaTime <= 0) {
             return 0;
         }
 
@@ -34,20 +51,28 @@ public class VelocityPID {
             derivative = (error - previousError) / deltaTime;
         }
 
-        // Calculate the correction
         double newIntegral = integral + error * deltaTime;
 
         double output = kP * error
                 + kI * newIntegral
                 + kD * derivative;
 
-        // Limit output to motor power range
-        output = Math.max(-1.0, Math.min(1.0, output));
+        // Prevent integral windup during saturation
+        boolean upperSaturation =
+                output > maxOutput && error > 0;
 
-        // Prevent integral from growing when output is saturated
-        if (Math.abs(output) < 1.0 || kI == 0) {
+        boolean lowerSaturation =
+                output < -maxOutput && error < 0;
+
+        if (!upperSaturation && !lowerSaturation) {
             integral = newIntegral;
         }
+
+        // Limit the output
+        output = Math.max(
+                -maxOutput,
+                Math.min(maxOutput, output)
+        );
 
         previousError = error;
         firstRun = false;

@@ -37,7 +37,7 @@ public class VelocityPIDTest {
         check("Maximum power", pid.calculate(5, 0, 1), 1);
         check("Minimum power", pid.calculate(-5, 0, 1), -1);
 
-        // Integral windup protection
+        // Original anti-windup tests
         pid = new VelocityPID(0, 0.5, 0);
 
         check("Saturation", pid.calculate(4, 0, 1), 1);
@@ -49,7 +49,27 @@ public class VelocityPIDTest {
         check("Zero time", pid.calculate(5, 0, 0), 0);
         check("Negative time", pid.calculate(5, 0, -1), 0);
 
-        System.out.println("ALL PID TESTS PASSED");
+        // New tests: 40% motor power limit
+        pid = new VelocityPID(1, 0, 0, 0.4);
+
+        check("40% positive limit",
+                pid.calculate(5, 0, 1), 0.4);
+
+        pid.reset();
+
+        check("40% negative limit",
+                pid.calculate(-5, 0, 1), -0.4);
+
+        // New anti-windup test at 40%
+        pid = new VelocityPID(0, 0.5, 0, 0.4);
+
+        check("40% saturation",
+                pid.calculate(4, 0, 1), 0.4);
+
+        check("40% anti windup recovery",
+                pid.calculate(0.5, 0, 1), 0.25);
+
+        System.out.println("ALL 18 PID TESTS PASSED");
     }
 
     private static void check(String name,
