@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -14,11 +15,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @TeleOp(name = "Mecanum TeleOp")
 public class MecanumTeleOp extends OpMode {
 
-    DcMotor frontLeft;
-    DcMotor frontRight;
-    DcMotor backLeft;
-    DcMotor backRight;
-    DcMotor intake;
+    DcMotorEx frontLeft;
+    DcMotorEx frontRight;
+    DcMotorEx backLeft;
+    DcMotorEx backRight;
+    DcMotorEx intake;
 
     IMU imu;
 
@@ -36,11 +37,11 @@ public class MecanumTeleOp extends OpMode {
                 FtcDashboard.getInstance().getTelemetry()
         );
 
-        frontLeft = hardwareMap.get(DcMotor.class, "front_left_drive");
-        frontRight = hardwareMap.get(DcMotor.class, "front_right_drive");
-        backLeft = hardwareMap.get(DcMotor.class, "back_left_drive");
-        backRight = hardwareMap.get(DcMotor.class, "back_right_drive");
-        intake = hardwareMap.get(DcMotor.class, "intake");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "front_left_drive");
+        frontRight = hardwareMap.get(DcMotorEx.class, "front_right_drive");
+        backLeft = hardwareMap.get(DcMotorEx.class, "back_left_drive");
+        backRight = hardwareMap.get(DcMotorEx.class, "back_right_drive");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -73,7 +74,6 @@ public class MecanumTeleOp extends OpMode {
     @Override
     public void start() {
 
-        // Set the field reference when TeleOp starts
         imu.resetYaw();
     }
 
@@ -91,12 +91,12 @@ public class MecanumTeleOp extends OpMode {
                         gamepad1.right_trigger <= 0.1 &&
                         gamepad1.left_trigger <= 0.1;
 
-        // Lock all motors
+        // Stop and lock motors
         if (gamepad1.b) {
             motorsEnabled = false;
         }
 
-        // Enable motors when controls are neutral
+        // Enable motors
         if (gamepad1.y && !previousY &&
                 !gamepad1.b && controlsNeutral) {
             motorsEnabled = true;
@@ -111,10 +111,10 @@ public class MecanumTeleOp extends OpMode {
 
         } else {
 
-            // Always use Field Relative driving
+            // Always Field Relative
             driveFieldRelative(forward, right, rotate);
 
-            // Intake control
+            // Intake
             if (gamepad1.right_trigger > 0.1 &&
                     gamepad1.left_trigger <= 0.1) {
 
@@ -131,12 +131,11 @@ public class MecanumTeleOp extends OpMode {
             }
         }
 
-        // Telemetry
+        // General telemetry
         telemetry.addData("Safety",
                 motorsEnabled ? "ENABLED" : "LOCKED");
 
         telemetry.addData("Drive Mode", "Field Relative");
-
         telemetry.addData("Forward", forward);
         telemetry.addData("Strafe", right);
         telemetry.addData("Turn", rotate);
@@ -144,18 +143,28 @@ public class MecanumTeleOp extends OpMode {
         telemetry.addData("Angle IMU",
                 imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
 
+        // Motor power
         telemetry.addData("Front Left", frontLeft.getPower());
         telemetry.addData("Front Right", frontRight.getPower());
         telemetry.addData("Back Left", backLeft.getPower());
         telemetry.addData("Back Right", backRight.getPower());
 
+        // Encoder positions
         telemetry.addData("Encoder FL", frontLeft.getCurrentPosition());
         telemetry.addData("Encoder FR", frontRight.getCurrentPosition());
         telemetry.addData("Encoder BL", backLeft.getCurrentPosition());
         telemetry.addData("Encoder BR", backRight.getCurrentPosition());
 
+        // Encoder velocities in ticks per second
+        telemetry.addData("Velocity FL (ticks/s)", frontLeft.getVelocity());
+        telemetry.addData("Velocity FR (ticks/s)", frontRight.getVelocity());
+        telemetry.addData("Velocity BL (ticks/s)", backLeft.getVelocity());
+        telemetry.addData("Velocity BR (ticks/s)", backRight.getVelocity());
+
+        // Intake telemetry
         telemetry.addData("Intake Power", intake.getPower());
         telemetry.addData("Intake Encoder", intake.getCurrentPosition());
+        telemetry.addData("Intake Velocity (ticks/s)", intake.getVelocity());
 
         telemetry.addData("Speed Limit", speedLimit * 100 + "%");
         telemetry.addData("Dead Zone", deadZone * 100 + "%");
@@ -184,7 +193,7 @@ public class MecanumTeleOp extends OpMode {
         return value;
     }
 
-    // Field Relative movement
+    // Field Relative
     private void driveFieldRelative(
             double forward,
             double right,
@@ -204,7 +213,7 @@ public class MecanumTeleOp extends OpMode {
         drive(newForward, newRight, rotate);
     }
 
-    // Robot Relative motor calculations
+    // Robot Relative calculations
     public void drive(
             double forward,
             double right,
