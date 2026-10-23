@@ -10,7 +10,8 @@ public class VelocityPIDLoadSimulation {
 
     public static void main(String[] args) throws IOException {
 
-        VelocityPID pid = new VelocityPID(0.001, 0.003, 0);
+        // Adjusted PID parameters for this simulation
+        VelocityPID pid = new VelocityPID(0.005, 0.01, 0);
 
         double velocity = 0;
         double target = 600;
@@ -18,6 +19,8 @@ public class VelocityPIDLoadSimulation {
 
         double deltaTime = 0.02;
         double responseTime = 0.35;
+
+        double peakVelocity = 0;
 
         String file = "/tmp/ftc-pid-load.csv";
 
@@ -32,7 +35,7 @@ public class VelocityPIDLoadSimulation {
 
                 double time = i * deltaTime;
 
-                // Simulate additional resistance
+                // Resistance between 4 and 7 seconds
                 boolean load = time >= 4 && time < 7;
 
                 double efficiency = load ? 0.65 : 1.0;
@@ -51,6 +54,11 @@ public class VelocityPIDLoadSimulation {
                 velocity += (requestedVelocity - velocity)
                         * deltaTime / responseTime;
 
+                // Track overshoot after resistance is removed
+                if (time >= 7) {
+                    peakVelocity = Math.max(peakVelocity, velocity);
+                }
+
                 writer.printf(Locale.US,
                         "%.2f,%.0f,%.2f,%.3f,%s%n",
                         time, target, velocity, power, load
@@ -66,6 +74,18 @@ public class VelocityPIDLoadSimulation {
                 }
             }
         }
+
+        double overshoot = (peakVelocity - target) / target * 100;
+
+        System.out.printf(Locale.US,
+                "%nPeak velocity: %.1f ticks/s%n",
+                peakVelocity
+        );
+
+        System.out.printf(Locale.US,
+                "Overshoot: %.2f%%%n",
+                overshoot
+        );
 
         System.out.println("Simulation completed!");
         System.out.println("Data saved to: " + file);
