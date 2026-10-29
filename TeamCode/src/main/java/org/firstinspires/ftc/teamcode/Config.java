@@ -12,11 +12,11 @@ public class Config {
     public static final double tagWidthFromShootingDistance = 0.0;
     public static final double tagHeightFromShootingDistance = 0.0;
     public static final double driveTrainMaxSpeed = 1.0;
-    public static final String FrontLeftDriveTrainMotorName = "frontLeftDrive";
-    public static final String FrontRightDriveTrainMotorName = "frontRightDrive";
-    public static final String BackLeftDriveTrainMotorName = "backLeftDrive";
-    public static final String BackRightDriveTrainMotorName = "backRightDrive";
-    public static final String IntakeMotorName = "intake";
+    public static final String FRONT_LEFT_DRIVE_TRAIN_MOTOR_NAME = "frontLeftDrive";
+    public static final String FRONT_RIGHT_DRIVE_TRAIN_MOTOR_NAME = "frontRightDrive";
+    public static final String BACK_LEFT_DRIVE_TRAIN_MOTOR_NAME = "backLeftDrive";
+    public static final String BACK_RIGHT_DRIVE_TRAIN_MOTOR_NAME = "backRightDrive";
+    public static final String INTAKE_MOTOR_NAME = "intake";
 
 
 
