@@ -24,8 +24,9 @@ public class Config {
     public static final String INTAKE_MOTOR_NAME = "intake";
     public static final Boolean DRIVE_ROBOT_RELATIVE_TO_FIELD = true;
     public static final String IMU_NAME = "imu";
-    public static final UsbFacingDirection USB_FACING_DIRECTION = UsbFacingDirection.FORWARD;
-    public static final LogoFacingDirection LOGO_FACING_DIRECTION = LogoFacingDirection.FORWARD;
+
+    public static final UsbFacingDirection IMU_USB_FACING_DIRECTION = UsbFacingDirection.FORWARD;
+    public static final LogoFacingDirection IMU_LOGO_FACING_DIRECTION = LogoFacingDirection.RIGHT;
 
 
 
