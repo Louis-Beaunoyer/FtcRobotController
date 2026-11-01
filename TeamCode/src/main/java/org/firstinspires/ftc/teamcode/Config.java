@@ -9,14 +9,16 @@ public class Config {
 
     public static final int CAMERA_WIDTH = 320;
     public static final int CAMERA_HEIGHT = 240;
-    public static final double tagWidthFromShootingDistance = 0.0;
-    public static final double tagHeightFromShootingDistance = 0.0;
-    public static final double driveTrainMaxSpeed = 1.0;
+    public static final double TAG_WIDTH_FROM_SHOOTING_DISTANCE = 0.0;
+    public static final double TAG_HEIGHT_FROM_SHOOTING_DISTANCE = 0.0;
+    public static final double DRIVE_TRAIN_MAX_SPEED = 1.0;
+    public static final double DRIVE_TRAIN_MAX_POWER = 1.0;
     public static final String FRONT_LEFT_DRIVE_TRAIN_MOTOR_NAME = "frontLeftDrive";
     public static final String FRONT_RIGHT_DRIVE_TRAIN_MOTOR_NAME = "frontRightDrive";
     public static final String BACK_LEFT_DRIVE_TRAIN_MOTOR_NAME = "backLeftDrive";
     public static final String BACK_RIGHT_DRIVE_TRAIN_MOTOR_NAME = "backRightDrive";
     public static final String INTAKE_MOTOR_NAME = "intake";
+    public static final Boolean DRIVE_ROBOT_RELATIVE_TO_FIELD = true;
 
 
 
