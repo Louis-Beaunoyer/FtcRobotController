@@ -38,16 +38,16 @@ public class Mecanum4MotorTest extends OpMode {
 
         // Four drive motors
         frontLeft = hardwareMap.get(
-                DcMotorEx.class, "front_left_drive");
+                DcMotorEx.class, Config.FRONT_LEFT_DRIVE_TRAIN_MOTOR_NAME);
 
         frontRight = hardwareMap.get(
-                DcMotorEx.class, "front_right_drive");
+                DcMotorEx.class, Config.FRONT_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
 
         backLeft = hardwareMap.get(
-                DcMotorEx.class, "back_left_drive");
+                DcMotorEx.class, Config.BACK_LEFT_DRIVE_TRAIN_MOTOR_NAME);
 
         backRight = hardwareMap.get(
-                DcMotorEx.class, "back_right_drive");
+                DcMotorEx.class, Config.BACK_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
 
         // Motor directions
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
