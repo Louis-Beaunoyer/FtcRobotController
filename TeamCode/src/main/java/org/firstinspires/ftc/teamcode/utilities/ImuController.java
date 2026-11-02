@@ -18,7 +18,7 @@ public class ImuController {
         return new IMU.Parameters(new RevHubOrientationOnRobot(logoFacingDirection, usbFacingDirection));
     }
 
-    public double getYawInDegrees() { 
+    public double getYawInDegrees() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
