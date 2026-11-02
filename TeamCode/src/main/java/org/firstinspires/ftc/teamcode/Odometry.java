@@ -3,20 +3,27 @@ package org.firstinspires.ftc.teamcode;
 
 public class Odometry {
 
+    // Converts encoder ticks in centimeters
     private final double centimetersPerTick;
+
+    // Signed distance of each odopod from the robot reference point
     private final double parallelOffsetCm;
     private final double perpendicularOffsetCm;
 
+    // Previous sensor readings used to calculate movement
     private int previousParallelTicks;
     private int previousPerpendicularTicks;
     private double previousYawRadians;
 
+    // Robot position relative to the last reset
     private double xCm;
     private double yCm;
     private double headingRadians;
 
     private boolean initialized = false;
 
+    // Creates the odometry calculator with the wheel dimensions
+    // and the positions of the two odopods
     public Odometry(double ticksPerRevolution,
                     double wheelRadiusCm,
                     double parallelOffsetCm,
@@ -40,9 +47,14 @@ public class Odometry {
         this.perpendicularOffsetCm = perpendicularOffsetCm;
     }
 
-    // X = forward, Y = left
-    // Positive heading = counterclockwise
+    // Coordinate system:
+    // X is forward and Y is left
+    // Positive is counterclockwise.
+    // Parallel offset is positive on the left side
+    // Perpendicular offset is positive toward the front
 
+    // Sets the current sensor as the starting point
+    // This does not reset the physical encoders or IMU
     public void reset(int parallelTicks,
                       int perpendicularTicks,
                       double yawRadians) {
@@ -62,6 +74,8 @@ public class Odometry {
         initialized = true;
     }
 
+    // Updates the robot position using both odopods and the IMU
+    // This method should be called once per robot update cycle normaly
     public void update(int parallelTicks,
                        int perpendicularTicks,
                        double yawRadians) {
@@ -75,7 +89,7 @@ public class Odometry {
             return;
         }
 
-        // Convert encoder ticks to centimeters
+        // Step 1: Convert encoder changes in centimeters.
         double deltaParallel =
                 ((long) parallelTicks - previousParallelTicks)
                         * centimetersPerTick;
@@ -84,37 +98,57 @@ public class Odometry {
                 ((long) perpendicularTicks - previousPerpendicularTicks)
                         * centimetersPerTick;
 
-        // Calculate the rotation since last update
+        // Step 2: Calculate the change in heading
+        // atan2 handles the transition entre +180 and -180 degrees
         double deltaHeading = Math.atan2(
                 Math.sin(yawRadians - previousYawRadians),
                 Math.cos(yawRadians - previousYawRadians)
         );
 
-        // Correct pod movement caused by robot rotation
+        // Step 3: Remove the odopod movement caused by rotation
         double forward =
                 deltaParallel + parallelOffsetCm * deltaHeading;
 
         double left =
                 deltaPerpendicular - perpendicularOffsetCm * deltaHeading;
 
-        // Convert robot movement into coordinates
-        double middleHeading =
-                headingRadians + deltaHeading / 2.0;
+        // Step 4: Correct the distance when the robot
+        // moves and rotates in the same time
+        double halfTurn = deltaHeading / 2.0;
+        double arcScale;
 
-        xCm += forward * Math.cos(middleHeading)
-                - left * Math.sin(middleHeading);
+        // Use an approximation near zero to avoid division by zero
+        if (Math.abs(halfTurn) < 0.0001) {
+            double square = halfTurn * halfTurn;
 
-        yCm += forward * Math.sin(middleHeading)
-                + left * Math.cos(middleHeading);
+            arcScale = 1.0 - square / 6.0
+                    + square * square / 120.0;
+        } else {
+            arcScale = Math.sin(halfTurn) / halfTurn;
+        }
+
+        // Step 5: Convert local robot movement into field coordinates
+        double middleHeading = headingRadians + halfTurn;
+
+        xCm += arcScale * (
+                forward * Math.cos(middleHeading)
+                        - left * Math.sin(middleHeading)
+        );
+
+        yCm += arcScale * (
+                forward * Math.sin(middleHeading)
+                        + left * Math.cos(middleHeading)
+        );
 
         headingRadians += deltaHeading;
 
-        // Save measure for the next update
+        // Step 6: Save the readings for the next update.
         previousParallelTicks = parallelTicks;
         previousPerpendicularTicks = perpendicularTicks;
         previousYawRadians = yawRadians;
     }
 
+    // Returns the robot position in centimeters
     public double getXcm() {
         return xCm;
     }
@@ -123,6 +157,7 @@ public class Odometry {
         return yCm;
     }
 
+    // Returns the accumuled heading in degrees
     public double getHeadingDegrees() {
         return Math.toDegrees(headingRadians);
     }
