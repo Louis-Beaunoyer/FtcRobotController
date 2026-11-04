@@ -22,7 +22,7 @@ public class Mecanum4MotorTest extends OpMode {
 
     IMU imu;
 
-    double speedLimit = 0.20;
+    double speedLimit = 0.80;
     double deadZone = 0.05;
 
     boolean motorsEnabled = false;
