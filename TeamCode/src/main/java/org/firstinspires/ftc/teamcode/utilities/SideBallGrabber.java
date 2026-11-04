@@ -8,7 +8,7 @@ public class SideBallGrabber {
 
     SideBallGrabber(DcMotorEx leftSideMotor, DcMotorEx rightSideMotor){
         this.leftMotor = leftSideMotor;
-        this.leftMotor = rightSideMotor;
+        this.rightMotor = rightSideMotor;
         this.defaultGrabberSpeed = Config.DEFAULT_BALL_GRABBER_SPEED;
 
     }
