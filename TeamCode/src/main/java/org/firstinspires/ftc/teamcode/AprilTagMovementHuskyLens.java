@@ -27,7 +27,7 @@ public class AprilTagMovementHuskyLens {
     Set<Integer> huskyLensIds;
 
 
-    public void DirectionFinder(HuskyLens huskyLens, TriFunction<Double, Double, Double, String> driveFunction) { //replace by actual opmode instead of sample opmode
+    public void DirectionFinder(HuskyLens huskyLens, IDriveFunctionPasser<Double, Double, Double, String> driveFunction) { //replace by actual opmode instead of sample opmode
         HuskyLens.Block[] blocks = huskyLens.blocks();
         for (int i = 0; i < blocks.length; i++) {
             if (blocks[i] != null) {
