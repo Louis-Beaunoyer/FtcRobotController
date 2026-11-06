@@ -15,7 +15,7 @@ public class RobotOPMode extends OpMode{
     @Override
     public void init(){
         DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, Config.INTAKE_MOTOR_NAME);
-        intake = new Intake(intakeMotor);
+        intake = new Intake(intakeMotor, gamepad1, gamepad2);
 
 
 
