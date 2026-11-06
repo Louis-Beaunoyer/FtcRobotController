@@ -1,20 +1,20 @@
 package org.firstinspires.ftc.teamcode.utilities;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Config;
 
 public class SideBallGrabber {
 
-    SideBallGrabber(DcMotorEx leftSideMotor, DcMotorEx rightSideMotor){
-        this.leftMotor = leftSideMotor;
-        this.rightMotor = rightSideMotor;
+    public SideBallGrabber(Servo leftSideServo, Servo rightSideServo){
+        this.leftServo = leftSideServo;
+        this.rightServo = rightSideServo;
         this.defaultGrabberSpeed = Config.DEFAULT_BALL_GRABBER_SPEED;
 
     }
 
-    DcMotorEx leftMotor;
-    DcMotorEx rightMotor;
+    Servo leftServo;
+    Servo rightServo;
     private double defaultGrabberSpeed;
     private double grabberSpeed;
 
@@ -25,7 +25,7 @@ public class SideBallGrabber {
         return grabberSpeed;
     }
     public void toogleGrabber(Boolean useDefaultSpeed) {
-        if (leftMotor.getPower() == 0) {
+        if (leftServo.getPosition() == 0) {
             if (useDefaultSpeed) {
                 setGrabberSpeed(defaultGrabberSpeed);
             } else {
