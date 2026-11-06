@@ -88,7 +88,7 @@ public class AprilTagMovementHuskyLens {
         return new Pair<>(newForwards, newRight);
     }
 
-    public void goToShootingPosition(TriFunction<Double, Double, Double, String> driveFunction, HuskyLens huskyLens) {
+    public void goToShootingPosition(IDriveFunctionPasser<Double, Double, Double, String> driveFunction, HuskyLens huskyLens) {
         DirectionFinder(huskyLens, driveFunction);
 
         Pair<Double, Double> parameters = findDistanceAndAngle();

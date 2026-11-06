@@ -90,7 +90,7 @@ public class AprilTagMovement {
         return new Pair<>(newForwards, newRight);
     }
 
-    public void goToShootingPosition(TriFunction<Double, Double, Double, String> driveFunction, AprilTagProcessor aprilTag) {
+    public void goToShootingPosition(IDriveFunctionPasser<Double, Double, Double, String> driveFunction, AprilTagProcessor aprilTag) {
         DirectionFinder(aprilTag, driveFunction);
 
         Pair<Double, Double> parameters = findDistanceAndAngle();
