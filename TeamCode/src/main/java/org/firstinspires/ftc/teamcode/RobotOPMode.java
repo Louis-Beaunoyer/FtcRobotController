@@ -31,6 +31,10 @@ public class RobotOPMode extends OpMode{
 
     public void loop(){
         intake.RunIntake();
+        sideBallGrabber.setGrabberSpeed(gamepad1.left_trigger);
+        if (gamepad1.a){
+            sideBallGrabber.toogleGrabber(false);
+        }
 
     }
 
