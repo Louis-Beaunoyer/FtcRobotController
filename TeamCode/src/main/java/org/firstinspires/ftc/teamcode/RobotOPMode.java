@@ -28,7 +28,7 @@ public class RobotOPMode extends OpMode{
     @Override
     public void init(){
         int soundID = hardwareMap.appContext.getResources().getIdentifier(
-                "Turkey-Gobble", // Name of the file without extension (e.g., "quack")
+                "TurkeyGobble", // Name of the file without extension (e.g., "quack")
                 "raw",
                 hardwareMap.appContext.getPackageName()
                 );
