@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.utilities;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Config;
 
 public class DriveTrain {
-    public DriveTrain(DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx backLeft, DcMotorEx backRight, IMU imu){
+    public DriveTrain(DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx backLeft, DcMotorEx backRight, ImuController imu){
         this.frontLeftMotor = frontLeft;
         this.frontRightMotor = frontRight;
         this.backLeftMotor = backLeft;
@@ -18,7 +17,7 @@ public class DriveTrain {
     DcMotorEx frontRightMotor;
     DcMotorEx backLeftMotor;
     DcMotorEx backRightMotor;
-    IMU imu;
+    ImuController imu;
     double maxPower = Config.DRIVE_TRAIN_MAX_POWER;
     double maxSpeed = Config.DRIVE_TRAIN_MAX_SPEED;
 
@@ -53,7 +52,7 @@ public class DriveTrain {
         return new double[]{forward, right};
     }
     private double rotateAngleByCurrentYaw(double theta){
-        double currentYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double currentYaw = imu.getYawInRadians();
         return AngleUnit.normalizeRadians(theta - currentYaw);
     }
     private double[] cartesianToPolar(double forward, double right){
