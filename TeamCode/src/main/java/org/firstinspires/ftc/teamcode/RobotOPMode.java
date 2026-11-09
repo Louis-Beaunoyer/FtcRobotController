@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.utilities.DriveTrain;
 import org.firstinspires.ftc.teamcode.utilities.SideBallGrabber;
 
 
@@ -16,7 +17,13 @@ public class RobotOPMode extends OpMode{
 
     Intake intake;
     SideBallGrabber sideBallGrabber;
+    DriveTrain driveTrain;
+
     DcMotorEx intakeMotor;
+    DcMotorEx frontLeftDriveTrainMotor;
+    DcMotorEx frontRightDriveTrainMotor;
+    DcMotorEx backLeftDriveTrainMotor;
+    DcMotorEx backRightDriveTrainMotor;
 
     @Override
     public void init(){
@@ -34,6 +41,10 @@ public class RobotOPMode extends OpMode{
         CRServo rightSideBallGrabberServo = hardwareMap.get(CRServo.class, Config.SIDE_BALL_GRABBER_RIGHT_MOTOR_NAME);
         intake = new Intake(intakeMotor, gamepad1, gamepad2);
         sideBallGrabber = new SideBallGrabber(leftSideBallGrabberServo, rightSideBallGrabberServo);
+        frontLeftDriveTrainMotor = hardwareMap.get(DcMotorEx.class, Config.FRONT_LEFT_DRIVE_TRAIN_MOTOR_NAME);
+        frontRightDriveTrainMotor = hardwareMap.get(DcMotorEx.class, Config.FRONT_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
+        backLeftDriveTrainMotor = hardwareMap.get(DcMotorEx.class, Config.BACK_LEFT_DRIVE_TRAIN_MOTOR_NAME);
+        backRightDriveTrainMotor = hardwareMap.get(DcMotorEx.class, Config.BACK_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
 
 
 
@@ -49,6 +60,7 @@ public class RobotOPMode extends OpMode{
         if (gamepad1.a){
             sideBallGrabber.toogleGrabber(false);
         }
+        driveTrain.driveFieldRelative(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
     }
 
