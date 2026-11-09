@@ -19,10 +19,14 @@ public class Config {
     public static final double DRIVE_TRAIN_MAX_SPEED = 1.0;
     public static final double DRIVE_TRAIN_MAX_POWER = 1.0;
 
+    public static final double SIDE_BALL_GRABBER_MAX_POWER = 1.0;
+    public static final double DEFAULT_BALL_GRABBER_SPEED = 0.9;
     public static final String FRONT_LEFT_DRIVE_TRAIN_MOTOR_NAME = "frontLeftDrive";
     public static final String FRONT_RIGHT_DRIVE_TRAIN_MOTOR_NAME = "frontRightDrive";
     public static final String BACK_LEFT_DRIVE_TRAIN_MOTOR_NAME = "backLeftDrive";
     public static final String BACK_RIGHT_DRIVE_TRAIN_MOTOR_NAME = "backRightDrive";
+    public static final String SIDE_BALL_GRABBER_LEFT_MOTOR_NAME = "sideBallGrabberLeft";
+    public static final String SIDE_BALL_GRABBER_RIGHT_MOTOR_NAME = "sideBallGrabberRight";
     public static final String INTAKE_MOTOR_NAME = "intake";
 
     public static final Boolean DRIVE_ROBOT_RELATIVE_TO_FIELD = true;

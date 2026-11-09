@@ -28,7 +28,7 @@ public class AprilTagMovement {
     Set<Integer> AprilTagIds;
 
 
-    public void DirectionFinder(AprilTagProcessor aprilTag, TriFunction<Double, Double, Double, String> driveFunction) { //replace by actual opmode instead of sample opmode
+    public void DirectionFinder(AprilTagProcessor aprilTag, IDriveFunctionPasser<Double, Double, Double, String> driveFunction) { //replace by actual opmode instead of sample opmode
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             if (detection instanceof AprilTagSingleDetection) {
@@ -90,7 +90,7 @@ public class AprilTagMovement {
         return new Pair<>(newForwards, newRight);
     }
 
-    public void goToShootingPosition(TriFunction<Double, Double, Double, String> driveFunction, AprilTagProcessor aprilTag) {
+    public void goToShootingPosition(IDriveFunctionPasser<Double, Double, Double, String> driveFunction, AprilTagProcessor aprilTag) {
         DirectionFinder(aprilTag, driveFunction);
 
         Pair<Double, Double> parameters = findDistanceAndAngle();
