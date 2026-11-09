@@ -46,7 +46,9 @@ public class DriveTrain {
         double theta = polar[1];
         theta = rotateAngleByCurrentYaw(theta);
         double[] cartesian = polarToCartesian(r, theta);
-        drive(cartesian[0], cartesian[1], rotate);
+        double newForward = cartesian[0];
+        double newRight = cartesian[1];
+        drive(newForward, newRight, rotate);
     }
 
     private double[] polarToCartesian(double r, double theta){

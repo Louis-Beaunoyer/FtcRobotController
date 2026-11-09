@@ -54,19 +54,20 @@ public class RobotOPMode extends OpMode{
 
 
 
-        intakeMotor = hardwareMap.get(DcMotorEx.class, Config.INTAKE_MOTOR_NAME);
-        CRServo leftSideBallGrabberServo = hardwareMap.get(CRServo.class, Config.SIDE_BALL_GRABBER_LEFT_MOTOR_NAME);
-        CRServo rightSideBallGrabberServo = hardwareMap.get(CRServo.class, Config.SIDE_BALL_GRABBER_RIGHT_MOTOR_NAME);
+        intakeMotor = hardwareMap.get(DcMotorEx.class, config.INTAKE_MOTOR_NAME);
+        CRServo leftSideBallGrabberServo = hardwareMap.get(CRServo.class, config.SIDE_BALL_GRABBER_LEFT_MOTOR_NAME);
+        CRServo rightSideBallGrabberServo = hardwareMap.get(CRServo.class, config.SIDE_BALL_GRABBER_RIGHT_MOTOR_NAME);
+        frontLeftDriveTrainMotor = hardwareMap.get(DcMotorEx.class, config.FRONT_LEFT_DRIVE_TRAIN_MOTOR_NAME);
+        frontRightDriveTrainMotor = hardwareMap.get(DcMotorEx.class, config.FRONT_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
+        backLeftDriveTrainMotor = hardwareMap.get(DcMotorEx.class, config.BACK_LEFT_DRIVE_TRAIN_MOTOR_NAME);
+        backRightDriveTrainMotor = hardwareMap.get(DcMotorEx.class, config.BACK_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
         imu = hardwareMap.get(IMU.class, "imu");
         imuController = new ImuController(imu);
         intake = new Intake(intakeMotor, gamepad1, gamepad2);
         config = new Config(false);
         sideBallGrabber = new SideBallGrabber(leftSideBallGrabberServo, rightSideBallGrabberServo);
         driveTrain = new DriveTrain(frontLeftDriveTrainMotor,frontRightDriveTrainMotor,backLeftDriveTrainMotor,backRightDriveTrainMotor, imuController, config);
-        frontLeftDriveTrainMotor = hardwareMap.get(DcMotorEx.class, Config.FRONT_LEFT_DRIVE_TRAIN_MOTOR_NAME);
-        frontRightDriveTrainMotor = hardwareMap.get(DcMotorEx.class, Config.FRONT_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
-        backLeftDriveTrainMotor = hardwareMap.get(DcMotorEx.class, Config.BACK_LEFT_DRIVE_TRAIN_MOTOR_NAME);
-        backRightDriveTrainMotor = hardwareMap.get(DcMotorEx.class, Config.BACK_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
+
 
 
 
@@ -83,6 +84,7 @@ public class RobotOPMode extends OpMode{
             sideBallGrabber.toogleGrabber(false);
         }
         driveTrain.driveFieldRelative(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+
 
     }
 
