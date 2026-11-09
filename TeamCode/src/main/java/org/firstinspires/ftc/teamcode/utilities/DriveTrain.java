@@ -6,20 +6,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Config;
 
 public class DriveTrain {
-    public DriveTrain(DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx backLeft, DcMotorEx backRight, ImuController imu){
+    public DriveTrain(DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx backLeft, DcMotorEx backRight, ImuController imu, Config config){
         this.frontLeftMotor = frontLeft;
         this.frontRightMotor = frontRight;
         this.backLeftMotor = backLeft;
         this.backRightMotor = backRight;
         this.imu = imu;
+        this.config = config;
     }
     DcMotorEx frontLeftMotor;
     DcMotorEx frontRightMotor;
     DcMotorEx backLeftMotor;
     DcMotorEx backRightMotor;
+    Config config;
     ImuController imu;
-    double maxPower = Config.DRIVE_TRAIN_MAX_POWER;
-    double maxSpeed = Config.DRIVE_TRAIN_MAX_SPEED;
+    double maxPower = config.DRIVE_TRAIN_MAX_POWER;
+    double maxSpeed = config.DRIVE_TRAIN_MAX_SPEED;
+
 
     public void drive(double forward, double right, double rotate){
         double frontLeftPower = forward + right + rotate;
