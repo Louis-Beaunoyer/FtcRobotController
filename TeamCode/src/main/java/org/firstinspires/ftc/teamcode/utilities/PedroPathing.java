@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.utilities;
 
 import com.pedropathing.algorithm.Foresight;
@@ -30,6 +29,7 @@ public class PedroPathing {
             c.backLeftName.set(Config.BACK_LEFT_DRIVE_TRAIN_MOTOR_NAME);
             c.backRightName.set(Config.BACK_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
 
+            // Original directions - physical validation pending
             c.frontLeftDirection.set(DcMotorSimple.Direction.REVERSE);
             c.backLeftDirection.set(DcMotorSimple.Direction.REVERSE);
             c.frontRightDirection.set(DcMotorSimple.Direction.FORWARD);
@@ -53,7 +53,8 @@ public class PedroPathing {
         if (parallelName == null || parallelName.isEmpty()
                 || perpendicularName == null || perpendicularName.isEmpty()
                 || imu == null) {
-            throw new IllegalArgumentException("Odometry hardware not configured");
+            throw new IllegalArgumentException(
+                    "Odometry hardware not configured");
         }
 
         if (!Double.isFinite(forwardTicksToInches)
@@ -62,7 +63,8 @@ public class PedroPathing {
                 || strafeTicksToInches <= 0
                 || !Double.isFinite(xPodOffset)
                 || !Double.isFinite(yPodOffset)) {
-            throw new IllegalArgumentException("Invalid odometry calibration");
+            throw new IllegalArgumentException(
+                    "Invalid odometry calibration");
         }
 
         return new TwoWheelConfig(c -> {
@@ -120,8 +122,11 @@ public class PedroPathing {
 
     // Stop following the path
     public void stop() {
+        // Cancel the active path
         follower.stop();
-        follower.update();
+
+        // Stop motors directly without reading sensors
+        follower.drivetrain.stop();
     }
 
     // Get the robot position
