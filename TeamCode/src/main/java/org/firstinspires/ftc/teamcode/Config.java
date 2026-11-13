@@ -33,10 +33,10 @@ public class Config {
     public static final String IMU_NAME = "imu";
 
     public static final UsbFacingDirection IMU_USB_FACING_DIRECTION =
-            UsbFacingDirection.FORWARD;
+            UsbFacingDirection.LEFT;
 
     public static final LogoFacingDirection IMU_LOGO_FACING_DIRECTION =
-            LogoFacingDirection.RIGHT;
+            LogoFacingDirection.UP;
 
     // ODOMETRY CONFIGURATION
     // Those values need to be measured on the real robot
@@ -53,8 +53,8 @@ public class Config {
     public static final double ODOMETRY_PERPENDICULAR_OFFSET_CM = Double.NaN;
 
     // Hardware names will be confirmed after conecting the odopods
-    public static final String ODOMETRY_PARALLEL_ENCODER_NAME = "";
-    public static final String ODOMETRY_PERPENDICULAR_ENCODER_NAME = "";
+    public static final String ODOMETRY_PARALLEL_ENCODER_NAME = "odopody";
+    public static final String ODOMETRY_PERPENDICULAR_ENCODER_NAME = "odopodx";
 
     public Config(boolean isBlueAlliance) {
         Config.isBlueAlliance = isBlueAlliance;
