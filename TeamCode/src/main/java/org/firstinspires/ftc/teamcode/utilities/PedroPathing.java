@@ -21,24 +21,39 @@ public class PedroPathing {
 
     private final Follower follower;
 
-    // Configure the four mecanum motors
+    // Directions tested with our Mecanum diagnostic.
     public static MecanumConfig createMecanumConfig() {
-        return new MecanumConfig(c -> {
-            c.frontLeftName.set(Config.FRONT_LEFT_DRIVE_TRAIN_MOTOR_NAME);
-            c.frontRightName.set(Config.FRONT_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
-            c.backLeftName.set(Config.BACK_LEFT_DRIVE_TRAIN_MOTOR_NAME);
-            c.backRightName.set(Config.BACK_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
 
-            // Original directions - physical validation pending
-            c.frontLeftDirection.set(DcMotorSimple.Direction.REVERSE);
-            c.backLeftDirection.set(DcMotorSimple.Direction.REVERSE);
-            c.frontRightDirection.set(DcMotorSimple.Direction.FORWARD);
-            c.backRightDirection.set(DcMotorSimple.Direction.FORWARD);
+        return new MecanumConfig(c -> {
+
+            c.frontLeftName.set(
+                    Config.FRONT_LEFT_DRIVE_TRAIN_MOTOR_NAME);
+
+            c.frontRightName.set(
+                    Config.FRONT_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
+
+            c.backLeftName.set(
+                    Config.BACK_LEFT_DRIVE_TRAIN_MOTOR_NAME);
+
+            c.backRightName.set(
+                    Config.BACK_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
+
+            c.frontLeftDirection.set(
+                    DcMotorSimple.Direction.REVERSE);
+
+            c.frontRightDirection.set(
+                    DcMotorSimple.Direction.FORWARD);
+
+            c.backLeftDirection.set(
+                    DcMotorSimple.Direction.FORWARD);
+
+            c.backRightDirection.set(
+                    DcMotorSimple.Direction.REVERSE);
         });
     }
 
-    // Configure two odometry wheels and the IMU
-    // Distances must be in inches
+    // Two-wheel localization configuration.
+    // All geometric distances are in inches.
     public static TwoWheelConfig createTwoWheelConfig(
             String parallelName,
             String perpendicularName,
@@ -51,8 +66,10 @@ public class PedroPathing {
             CustomIMU imu) {
 
         if (parallelName == null || parallelName.isEmpty()
-                || perpendicularName == null || perpendicularName.isEmpty()
+                || perpendicularName == null
+                || perpendicularName.isEmpty()
                 || imu == null) {
+
             throw new IllegalArgumentException(
                     "Odometry hardware not configured");
         }
@@ -63,78 +80,124 @@ public class PedroPathing {
                 || strafeTicksToInches <= 0
                 || !Double.isFinite(xPodOffset)
                 || !Double.isFinite(yPodOffset)) {
+
             throw new IllegalArgumentException(
                     "Invalid odometry calibration");
         }
 
         return new TwoWheelConfig(c -> {
+
             c.xPodName.set(parallelName);
             c.yPodName.set(perpendicularName);
+
             c.imuName.set(Config.IMU_NAME);
 
-            c.forwardTicksToInches.set(forwardTicksToInches);
-            c.strafeTicksToInches.set(strafeTicksToInches);
+            c.forwardTicksToInches.set(
+                    forwardTicksToInches);
+
+            c.strafeTicksToInches.set(
+                    strafeTicksToInches);
 
             c.xPodOffset.set(xPodOffset);
             c.yPodOffset.set(yPodOffset);
 
             c.xPodDirection.set(
-                    reverseParallel ? Encoder.REVERSE : Encoder.FORWARD);
+                    reverseParallel
+                            ? Encoder.REVERSE
+                            : Encoder.FORWARD);
 
             c.yPodDirection.set(
-                    reversePerpendicular ? Encoder.REVERSE : Encoder.FORWARD);
+                    reversePerpendicular
+                            ? Encoder.REVERSE
+                            : Encoder.FORWARD);
 
             c.imu.set(imu);
         });
     }
 
-    // Create the follower using the configured hardware
+    // New convenience factory.
+    // Uses our shared physical odometry calibration.
+    public static Follower createFollower(
+            HardwareMap hardwareMap,
+            ForesightConfig pathConfig) {
+
+        return createFollower(
+                hardwareMap,
+                PedroLocalizationConfig.create(),
+                pathConfig
+        );
+    }
+
+    // Original factory retained for compatibility.
     public static Follower createFollower(
             HardwareMap hardwareMap,
             TwoWheelConfig odometryConfig,
             ForesightConfig pathConfig) {
 
+        if (hardwareMap == null
+                || odometryConfig == null
+                || pathConfig == null) {
+
+            throw new IllegalArgumentException(
+                    "Follower configuration is missing");
+        }
+
         TwoWheelLocalizer localizer =
-                new TwoWheelLocalizer(hardwareMap, odometryConfig);
+                new TwoWheelLocalizer(
+                        hardwareMap,
+                        odometryConfig);
 
         Mecanum drivetrain =
-                new Mecanum(hardwareMap, createMecanumConfig());
+                new Mecanum(
+                        hardwareMap,
+                        createMecanumConfig());
 
-        Foresight algorithm = new Foresight(pathConfig);
+        Foresight algorithm =
+                new Foresight(pathConfig);
 
-        return new Follower(localizer, drivetrain, algorithm);
+        return new Follower(
+                localizer,
+                drivetrain,
+                algorithm);
     }
 
-    // Receive the configured follower
     public PedroPathing(Follower follower) {
+
+        if (follower == null) {
+            throw new IllegalArgumentException(
+                    "Follower cannot be null");
+        }
+
         this.follower = follower;
     }
 
-    // Update localization and path following
     public void update() {
         follower.update();
     }
 
-    // Follow a path
     public void followPath(Path path) {
+
+        if (path == null) {
+            throw new IllegalArgumentException(
+                    "Path cannot be null");
+        }
+
         follower.follow(path);
     }
 
-    // Stop following the path
+    // Cancel Pedro and request a drivetrain stop.
+    // The central direct-motor stop is still required
+    // when changing between manual and auto control.
     public void stop() {
-        // Cancel the active path
-        follower.stop();
 
-        // Stop motors directly without reading sensors
+        follower.stop();
         follower.drivetrain.stop();
     }
 
-    // Get the robot position
     public Pose getPose() {
         return follower.pose();
     }
 
-    // Check if the follower is busy
     public boolean isBusy() {
         return follower.isBusy();
     }
