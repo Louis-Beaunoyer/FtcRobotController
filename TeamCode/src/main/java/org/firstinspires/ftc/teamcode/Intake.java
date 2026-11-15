@@ -11,6 +11,9 @@ public class Intake {
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
     }
+    public void init() {
+        intakeMotor.setPower(0);
+    }
 
     public void RunIntake() {
         if (gamepad1.right_trigger > 0.1) {

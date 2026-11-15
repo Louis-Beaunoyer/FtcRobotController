@@ -19,8 +19,11 @@ public class ImuController {
     public ImuController(IMU imu) {
         this.imu = imu;
     }
+    public void init(){
+        imu.initialize(getInitializationParameters());
+    }
 
-    public IMU.Parameters getInitializationParameters() {
+    private IMU.Parameters getInitializationParameters() {
         return new IMU.Parameters(new RevHubOrientationOnRobot(logoFacingDirection, usbFacingDirection));
     }
 

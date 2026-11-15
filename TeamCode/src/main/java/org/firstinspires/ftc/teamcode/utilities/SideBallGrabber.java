@@ -17,6 +17,11 @@ public class SideBallGrabber {
     CRServo rightServo;
     private double defaultGrabberSpeed;
     private double grabberSpeed;
+    public void init() {
+        leftServo.setPower(0.0);
+        rightServo.setPower(0.0);
+    }
+
 
     public void setGrabberSpeed(double speed){
         grabberSpeed = speed;
