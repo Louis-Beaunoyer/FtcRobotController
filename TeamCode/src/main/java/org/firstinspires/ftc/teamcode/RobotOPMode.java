@@ -64,7 +64,7 @@ public class RobotOPMode extends OpMode{
         imu = hardwareMap.get(IMU.class, "imu");
         imuController = new ImuController(imu);
         intake = new Intake(intakeMotor, gamepad1, gamepad2);
-        config = new Config(false);
+        config = new Config();
         sideBallGrabber = new SideBallGrabber(leftSideBallGrabberServo, rightSideBallGrabberServo);
         driveTrain = new DriveTrain(frontLeftDriveTrainMotor,frontRightDriveTrainMotor,backLeftDriveTrainMotor,backRightDriveTrainMotor, imuController, config);
 
@@ -80,10 +80,16 @@ public class RobotOPMode extends OpMode{
     public void loop(){
         intake.RunIntake();
         sideBallGrabber.setGrabberSpeed(1);
-        if (gamepad1.a){
+        if (gamepad1.circle){
             sideBallGrabber.toogleGrabber(false);
         }
-        driveTrain.driveFieldRelative(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        driveTrain.driveFieldRelative(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x);
+        if (gamepad1.x) {
+            imuController.resetYaw();
+            telemetry.addData("Reset Yaw", "Reseting Yaw");
+        }
+        telemetry.addData("Yaw", imuController.getYawInDegrees());
+
 
 
     }
