@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection;
 
@@ -37,7 +35,7 @@ public class Config {
 
 
     public void init() {
-        telemetry.addData("Config", "Initialized");
+
     }
 
 
