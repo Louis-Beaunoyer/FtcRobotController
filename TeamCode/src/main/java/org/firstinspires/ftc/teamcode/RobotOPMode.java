@@ -89,7 +89,7 @@ public class RobotOPMode extends OpMode{
         if (gamepad1.circle){
             sideBallGrabber.toogleGrabber(false);
         }
-        driveTrain.driveFieldRelative(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+        driveTrain.driveFieldRelative(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         if (gamepad1.x) {
             imuController.resetYaw();
             telemetry.addData("Reset Yaw", "Reseting Yaw");
