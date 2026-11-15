@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection;
 
@@ -16,7 +18,7 @@ public class Config {
     public static final double TAG_WIDTH_FROM_SHOOTING_DISTANCE = 0.0;
     public static final double TAG_HEIGHT_FROM_SHOOTING_DISTANCE = 0.0;
     public static final double DRIVE_TRAIN_MAX_SPEED = 1.0;
-    public static final double DRIVE_TRAIN_MAX_POWER = 1.0;
+    public static final double DRIVE_TRAIN_MAX_POWER = 0.3;
     public static final double SIDE_BALL_GRABBER_MAX_POWER = 1.0;
     public static final double DEFAULT_BALL_GRABBER_SPEED = 0.9;
     public static final String FRONT_LEFT_DRIVE_TRAIN_MOTOR_NAME = "frontLeftDrive";
@@ -34,6 +36,9 @@ public class Config {
 
 
 
+    public void init() {
+        telemetry.addData("Config", "Initialized");
+    }
 
 
     public static Set<Integer> getIds() {

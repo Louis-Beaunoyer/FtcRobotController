@@ -64,6 +64,7 @@ public class RobotOPMode extends OpMode{
         imu = hardwareMap.get(IMU.class, "imu");
         imuController = new ImuController(imu);
         config = new Config();
+        config.init();
 
         imuController.init();
 
