@@ -5,10 +5,16 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Config;
 
+
+
+
 public class ImuController {
+
+    Config config = new Config();
     private final IMU imu;
-    private final RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection = Config.IMU_LOGO_FACING_DIRECTION;
-    private final RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection = Config.IMU_USB_FACING_DIRECTION;
+    private final RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection = config.IMU_LOGO_FACING_DIRECTION;
+    private final RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection = config.IMU_USB_FACING_DIRECTION;
+
 
     public ImuController(IMU imu) {
         this.imu = imu;
