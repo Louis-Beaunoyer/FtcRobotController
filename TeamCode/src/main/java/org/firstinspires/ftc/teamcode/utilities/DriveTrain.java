@@ -42,13 +42,9 @@ public class DriveTrain {
     }
     public void driveFieldRelative(double forward, double right, double rotate){
         double[] polar = cartesianToPolar(forward, right);
-        double r = polar[0];
-        double theta = polar[1];
-        theta = rotateAngleByCurrentYaw(theta);
-        double[] cartesian = polarToCartesian(r, theta);
-        double newForward = cartesian[0];
-        double newRight = cartesian[1];
-        drive(newForward, newRight, rotate);
+        double theta = rotateAngleByCurrentYaw(polar[1]);
+        double[] cartesian = polarToCartesian(polar[0], theta);
+        drive(cartesian[0] , cartesian[1], rotate);
     }
 
     private double[] polarToCartesian(double r, double theta){
@@ -57,12 +53,11 @@ public class DriveTrain {
         return new double[]{forward, right};
     }
     private double rotateAngleByCurrentYaw(double theta){
-        double currentYaw = imu.getYawInRadians();
-        return AngleUnit.normalizeRadians(theta - currentYaw);
+        return AngleUnit.normalizeRadians(theta - imu.getYawInRadians());
     }
     private double[] cartesianToPolar(double forward, double right){
-        double r = Math.hypot(right, forward);
         double theta = Math.atan2(forward, right);
+        double r = Math.hypot(right, forward);
         return new double[]{r, theta};
 
     }
