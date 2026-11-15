@@ -47,6 +47,7 @@ public class DriveTrain {
 
 
     public void drive(double forward, double right, double rotate){
+        maxPower = config.DRIVE_TRAIN_MAX_POWER;
         double frontLeftPower = forward + right + rotate;
         double frontRightPower = forward - right - rotate;
         double backLeftPower = forward - right + rotate;
