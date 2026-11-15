@@ -61,7 +61,7 @@ public class DriveTrain {
         return AngleUnit.normalizeRadians(theta - currentYaw);
     }
     private double[] cartesianToPolar(double forward, double right){
-        double r = Math.hypot(forward, right);
+        double r = Math.hypot(right, forward);
         double theta = Math.atan2(forward, right);
         return new double[]{r, theta};
 
