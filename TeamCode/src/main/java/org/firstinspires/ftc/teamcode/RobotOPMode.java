@@ -68,7 +68,7 @@ public class RobotOPMode extends OpMode{
         imuController.init();
 
         sideBallGrabber = new SideBallGrabber(leftSideBallGrabberServo, rightSideBallGrabberServo);
-        driveTrain = new DriveTrain(frontLeftDriveTrainMotor,frontRightDriveTrainMotor,backLeftDriveTrainMotor,backRightDriveTrainMotor, imuController, config);
+        driveTrain = new DriveTrain(frontLeftDriveTrainMotor,frontRightDriveTrainMotor,backLeftDriveTrainMotor,backRightDriveTrainMotor, imuController);
         intake = new Intake(intakeMotor, gamepad1, gamepad2);
         driveTrain.init();
         sideBallGrabber.init();
