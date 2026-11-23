@@ -86,6 +86,25 @@ public class DriveTrain {
         return new double[]{r, theta};
 
     }
+    public void turnToClosest180(){
+        double yaw = imu.getYawInDegrees();
+        if (Math.abs(yaw) <= 90.0) {
+            double multiplicator = (yaw >= 0) ? 1 :-1;
+
+            while (Math.abs(imu.getYawInDegrees()) > 3.0) {
+                drive(0,0,0.4*multiplicator);
+            }
+        }else {
+            double multiplicator = (yaw >= 0) ? -1 : 1;
+
+
+            while (Math.abs(imu.getYawInDegrees()) < 177.0) {
+                drive(0, 0, 0.4 * multiplicator);
+
+            }
+        }
+         drive(0,0,0);
+    }
 
     public enum selectDriveTrainMotor {
         frontLeft,

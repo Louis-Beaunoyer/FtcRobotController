@@ -21,6 +21,10 @@ public class SideBallGrabber {
         leftServo.setPower(0.0);
         rightServo.setPower(0.0);
     }
+    public void loop(){
+        leftServo.setPower(grabberSpeed);
+        rightServo.setPower(grabberSpeed);
+    }
 
 
     public void setGrabberSpeed(double speed){

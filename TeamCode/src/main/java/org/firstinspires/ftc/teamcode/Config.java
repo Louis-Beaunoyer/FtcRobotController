@@ -8,13 +8,17 @@ import java.util.Set;
 public class Config {
 
     public static boolean isBlueAlliance = false;
-    private static final Set<Integer> redAprilTagIds = Set.of(0, 1, 2, 3, 4, 5, 6, 7);
-    private static final Set<Integer> blueAprilTagIds = Set.of(34, 35, 36, 37, 38, 39, 40, 41);
+    private static final Set<Integer> redAprilTagIds = Set.of(1, 2, 3, 4, 5, 6, 7,8);
+    private static final Set<Integer> blueAprilTagIds = Set.of(9,10,11,12,13,14,15,16);
 
-    public static final int CAMERA_WIDTH = 320;
-    public static final int CAMERA_HEIGHT = 240;
-    public static final double TAG_WIDTH_FROM_SHOOTING_DISTANCE = 0.0;
-    public static final double TAG_HEIGHT_FROM_SHOOTING_DISTANCE = 0.0;
+    public static final double CAMERA_WIDTH = 320.0;
+    public static final double CAMERA_HEIGHT = 240.0;
+    public static final double APRIL_TAG_SHOOTING_POSITION_WANTED_X = 160.0;
+    public static final double APRIL_TAG_SHOOTING_POSITION_WANTED_TAG_WIDTH = 18.0;
+    public static final double APRIL_TAG_SHOOTING_POSITION_X_TOLERANCE = 10.0;
+    public static final double APRIL_TAG_SHOOTING_POSITION_WIDTH_TOLERANCE = 6.0;
+    public static final double APRIL_TAG_SHOOTING_POSITION_DRIVING_SPEED = 0.5;
+    public static final String CAMERA_NAME = "huskylens";
     public static final double DRIVE_TRAIN_MAX_SPEED = 1.0;
     public static final double DRIVE_TRAIN_MAX_POWER = 1.0;
     public static final double SIDE_BALL_GRABBER_MAX_POWER = 1.0;
@@ -34,7 +38,8 @@ public class Config {
 
 
 
-    public void init() {
+    public void init(Boolean isBlueAlliance) {
+        Config.isBlueAlliance = isBlueAlliance;
 
     }
 
