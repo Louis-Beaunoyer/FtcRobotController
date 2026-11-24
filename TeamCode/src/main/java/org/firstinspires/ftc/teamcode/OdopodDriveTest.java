@@ -100,7 +100,7 @@ public class OdopodDriveTest extends OpMode {
         IMU imu = hardwareMap.get(IMU.class, Config.IMU_NAME);
         imuController = new ImuController(imu);
 
-        imu.initialize(imuController.getInitializationParameters());
+        imuController.init();
 
         startTicks = -parallelPod.getCurrentPosition();
 

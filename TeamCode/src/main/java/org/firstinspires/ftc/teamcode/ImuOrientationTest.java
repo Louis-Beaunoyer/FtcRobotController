@@ -22,7 +22,7 @@ public class ImuOrientationTest extends OpMode {
         imuController = new ImuController(imu);
 
         // Use the orientation defined in Config.java
-        imu.initialize(imuController.getInitializationParameters());
+        imuController.init();
 
         imuController.resetYaw();
 

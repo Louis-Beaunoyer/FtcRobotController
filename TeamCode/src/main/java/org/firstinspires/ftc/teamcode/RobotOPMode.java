@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 
+import org.firstinspires.ftc.teamcode.utilities.AprilTag;
 import org.firstinspires.ftc.teamcode.utilities.DriveTrain;
 import org.firstinspires.ftc.teamcode.utilities.ImuController;
 import org.firstinspires.ftc.teamcode.utilities.SideBallGrabber;
@@ -29,6 +31,8 @@ public class RobotOPMode extends OpMode{
     ImuController imuController;
     IMU imu;
     Config config;
+    AprilTag aprilTag;
+    HuskyLens huskyLens;
 
     @Override
     public void init(){
@@ -54,19 +58,32 @@ public class RobotOPMode extends OpMode{
 
 
 
-        intakeMotor = hardwareMap.get(DcMotorEx.class, Config.INTAKE_MOTOR_NAME);
-        CRServo leftSideBallGrabberServo = hardwareMap.get(CRServo.class, Config.SIDE_BALL_GRABBER_LEFT_MOTOR_NAME);
-        CRServo rightSideBallGrabberServo = hardwareMap.get(CRServo.class, Config.SIDE_BALL_GRABBER_RIGHT_MOTOR_NAME);
+        intakeMotor = hardwareMap.get(DcMotorEx.class, config.INTAKE_MOTOR_NAME);
+        CRServo leftSideBallGrabberServo = hardwareMap.get(CRServo.class, config.SIDE_BALL_GRABBER_LEFT_MOTOR_NAME);
+        CRServo rightSideBallGrabberServo = hardwareMap.get(CRServo.class, config.SIDE_BALL_GRABBER_RIGHT_MOTOR_NAME);
+        frontLeftDriveTrainMotor = hardwareMap.get(DcMotorEx.class, config.FRONT_LEFT_DRIVE_TRAIN_MOTOR_NAME);
+        frontRightDriveTrainMotor = hardwareMap.get(DcMotorEx.class, config.FRONT_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
+        backLeftDriveTrainMotor = hardwareMap.get(DcMotorEx.class, config.BACK_LEFT_DRIVE_TRAIN_MOTOR_NAME);
+        backRightDriveTrainMotor = hardwareMap.get(DcMotorEx.class, config.BACK_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
+        huskyLens = hardwareMap.get(HuskyLens.class, config.CAMERA_NAME);
         imu = hardwareMap.get(IMU.class, "imu");
         imuController = new ImuController(imu);
-        intake = new Intake(intakeMotor, gamepad1, gamepad2);
-        config = new Config(false);
+        config = new Config();
+        config.init(false);
+        imuController.init();
+
+
+
         sideBallGrabber = new SideBallGrabber(leftSideBallGrabberServo, rightSideBallGrabberServo);
-        driveTrain = new DriveTrain(frontLeftDriveTrainMotor,frontRightDriveTrainMotor,backLeftDriveTrainMotor,backRightDriveTrainMotor, imuController, config);
-        frontLeftDriveTrainMotor = hardwareMap.get(DcMotorEx.class, Config.FRONT_LEFT_DRIVE_TRAIN_MOTOR_NAME);
-        frontRightDriveTrainMotor = hardwareMap.get(DcMotorEx.class, Config.FRONT_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
-        backLeftDriveTrainMotor = hardwareMap.get(DcMotorEx.class, Config.BACK_LEFT_DRIVE_TRAIN_MOTOR_NAME);
-        backRightDriveTrainMotor = hardwareMap.get(DcMotorEx.class, Config.BACK_RIGHT_DRIVE_TRAIN_MOTOR_NAME);
+        driveTrain = new DriveTrain(frontLeftDriveTrainMotor,frontRightDriveTrainMotor,backLeftDriveTrainMotor,backRightDriveTrainMotor, imuController);
+        intake = new Intake(intakeMotor, gamepad1, gamepad2);
+        driveTrain.init();
+        sideBallGrabber.init();
+        intake.init();
+        aprilTag = new AprilTag(huskyLens, driveTrain);
+        aprilTag.init();
+
+
 
 
 
@@ -78,11 +95,36 @@ public class RobotOPMode extends OpMode{
 
     public void loop(){
         intake.RunIntake();
-        sideBallGrabber.setGrabberSpeed(1);
-        if (gamepad1.a){
-            sideBallGrabber.toogleGrabber(false);
+        sideBallGrabber.setGrabberSpeed(gamepad1.left_trigger);
+        sideBallGrabber.loop();
+
+        if (gamepad1.square) {
+            imuController.resetYaw();
+            telemetry.addData("Reset Yaw", "Reseting Yaw");
         }
-        driveTrain.driveFieldRelative(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        telemetry.addData("Yaw", imuController.getYawInDegrees());
+        aprilTag.loop();
+
+        if (gamepad1.cross && !aprilTag.isAligning()) {
+            aprilTag.startsAligningToClosestTag();
+        }
+        if (Math.abs(gamepad1.left_stick_y) > 0.1|| Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.right_stick_x) > 0.1) {
+            aprilTag.stopAligning();
+        }
+        if (aprilTag.isAligning()) {
+            aprilTag.followIdToShootingPosition();
+        }else {
+            driveTrain.driveFieldRelative(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        }
+
+        if (gamepad1.triangle){ driveTrain.turnToClosest180();}
+
+        aprilTag.telemetry(telemetry);
+        telemetry.update();
+
+
+
+
 
     }
 

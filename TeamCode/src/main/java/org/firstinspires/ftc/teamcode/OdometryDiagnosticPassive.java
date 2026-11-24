@@ -61,7 +61,7 @@ public class OdometryDiagnosticPassive extends OpMode {
 
             // Use Louis's IMU controller and orientation
             ImuController imuController = new ImuController(imu);
-            imu.initialize(imuController.getInitializationParameters());
+            imuController.init();
 
             sensors = new OdometrySensors(
                     hardwareMap,

@@ -98,7 +98,7 @@ public class DriveDistanceTest extends OpMode {
         imu = hardwareMap.get(IMU.class, Config.IMU_NAME);
         imuController = new ImuController(imu);
 
-        imu.initialize(imuController.getInitializationParameters());
+        imuController.init();
         imuController.resetYaw();
 
         telemetry.addLine("X = Drive 20 cm");
